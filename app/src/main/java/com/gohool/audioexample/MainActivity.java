@@ -10,12 +10,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.text.Layout;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -44,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //재생
     private boolean isPlaying = false;
-    private Button play;
-    private SeekBar seekBar;
 
     private MediaPlayer mediaPlayer;
 
@@ -70,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         add.setOnClickListener(this);
 
         frameLayout = (FrameLayout) findViewById(R.id.frame);
-
-
 
 
         count = 0;
@@ -130,18 +125,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mediaRecorder.stop(); //녹음 종료
                 mediaRecorder.release();
                 mediaRecorder = null;
+
+                //버튼 추가 방법
                 Button playBtn = new Button(this);
                 playBtn.setText("Play");
-                int cursorPosition =  edit.getSelectionStart();
-                //TODO 위치값 가져와서 한칸 띄운다음에 버튼은 사이에 집어넣고 ,text도 그만큼 띄어 주고
-                System.getProperty("line.separator");
-                frameLayout.addView(playBtn, cursorPosition, ViewGroup.LayoutParams.WRAP_CONTENT);
+                edit.append("\n"); //줄 바꿈 ㅋㅋㅋㅋ
+                //TODO 위치값 가져와서 한칸 띄운다음에 edittext의 커서를 중심으로  버튼을 넣고, 한칸 더 띄어주고 
+                frameLayout.addView(playBtn, 100,100);
+
+                //edit의 위치 x y 값
+                int pos = edit.getSelectionEnd();
+                Layout layout = edit.getLayout();
+                int line = layout.getLineForOffset(pos);
+                int baseline = layout.getLineBaseline(line);
+                int ascent = layout.getLineAscent(line);
+                float x = layout.getPrimaryHorizontal(pos);
+                float y = baseline + ascent;
+
+
+
             }
             isRecording = false;
             count = 0;
             Toast.makeText(this, "저장", Toast.LENGTH_SHORT).show();
         }
     }//getResources().getDrawable(R.drawable.ic_baseline_fiber_manual_record_24
+    //frameLayout.addView(playBtn, cursorPosition, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
 
