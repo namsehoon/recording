@@ -3,6 +3,7 @@ package com.gohool.audioexample;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -10,7 +11,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -30,17 +35,23 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //녹음
     private FloatingActionButton add;
-    private TextView textView;
-
+    private EditText edit;
     private MediaRecorder mediaRecorder;
     private SimpleDateFormat simpleDateFormat;
-    private String file;
-    private File myFile;
-    private String memo;
-
-
     private boolean isRecording = false;
+
+    //재생
+    private boolean isPlaying = false;
+    private Button play;
+    private SeekBar seekBar;
+
+    private MediaPlayer mediaPlayer;
+
+
+    private FrameLayout frameLayout;
+
 
 
 
@@ -53,10 +64,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView) findViewById(R.id.textView);
+        edit = (EditText) findViewById(R.id.edit);
         add = (FloatingActionButton) findViewById(R.id.add);
         String state = Environment.getExternalStorageState();//읽기, 쓰기 가능 체크
         add.setOnClickListener(this);
+
+        frameLayout = (FrameLayout) findViewById(R.id.frame);
+
+
 
 
         count = 0;
@@ -74,15 +89,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void readyAndGo(){
+        //파일 이름에 날짜, 이름 추가
         simpleDateFormat = new SimpleDateFormat("MM-dd");
         String date = simpleDateFormat.format(new Date());
         String Filename = "Memo : "+ date + ".3gp";
-
-
-
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + Filename;
+        
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC); //녹화 스트림 설정
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);//아웃풋 포맷 설정
@@ -90,11 +104,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Operator '+' cannot be applied to 'java.io.File', 'long'
         // start, stop에서 Illegalstatement 에러가 순차적으로 나서 3일 동안 고생한 결과, mediaRecorder에는 문제가 없었고, 저장경로를 설정하는데 오류가 있었다.
-        mediaRecorder.setOutputFile(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + Filename);
+        mediaRecorder.setOutputFile(filePath);
         try {
             mediaRecorder.prepare();
         }catch (Exception e){
             e.printStackTrace();
+
         }
 
     }
@@ -112,15 +127,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             count++;
         }else if(count == 1 && isRecording) {
             if(mediaRecorder != null){
-                mediaRecorder.stop();
+                mediaRecorder.stop(); //녹음 종료
                 mediaRecorder.release();
                 mediaRecorder = null;
+                Button playBtn = new Button(this);
+                playBtn.setText("Play");
+                int cursorPosition =  edit.getSelectionStart();
+                //TODO 위치값 가져와서 한칸 띄운다음에 버튼은 사이에 집어넣고 ,text도 그만큼 띄어 주고
+                System.getProperty("line.separator");
+                frameLayout.addView(playBtn, cursorPosition, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
             isRecording = false;
             count = 0;
             Toast.makeText(this, "저장", Toast.LENGTH_SHORT).show();
         }
-    }
+    }//getResources().getDrawable(R.drawable.ic_baseline_fiber_manual_record_24
 
 
 

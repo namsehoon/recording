@@ -2,9 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gohool.audioexample">
 
+
+    <!-- 음성녹음, 외부저장소 읽기, 쓰기) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- TODO : 권한 요청 코드 필요! -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
+    <!-- 미디어 플레이어 , 플레이어 구동시 앱 화면이 꺼지지 않게 방지, 프로세서가 잠들지 않게 할떄-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
 
     <!-- android:requestLegacyExternalStorage="true" 추가 해야 외부저장소에 접근 가능 -->
 
